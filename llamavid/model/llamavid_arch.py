@@ -252,7 +252,7 @@ class LLaMAVIDMetaForCausalLM(ABC):
             image_features = images
         else:
             image_features = self.get_model().get_vision_tower()(images)
-
+        # print(image_features.shape,)
         image_features = self.vlm_attention(image_features, 
                                             prompts=prompts, 
                                             image_counts=image_counts,
@@ -309,7 +309,6 @@ class LLaMAVIDMetaForCausalLM(ABC):
                 query_tokens = self.get_model().vlm_att_query.expand(bert_feat.shape[0], -1, -1)
                 query_atts = torch.cat([torch.ones(query_tokens.size()[:-1], dtype=torch.long).to(bert_feat.device), 
                                         attention_masks],dim=1)
-                
                 if 'pretrain' in self.config.bert_type:
                     mm_img_in = self.get_model().vlm_att_ln(bert_feat)
                 else:
@@ -359,14 +358,17 @@ class LLaMAVIDMetaForCausalLM(ABC):
             else:
                 raise ValueError(f'Unexpected bert type: {self.config.bert_type}')
             
+            # print(mm_output.shape, query_tokens.shape, input_ids.shape, bert_feat.shape)
             text_q = self.get_model().vlm_att_projector(mm_output)
             final_token = self.token_generation(text_q, img_feat_prompt, long_video=long_video)
+            # print(text_q.shape, img_feat_prompt.shape, final_token.shape, long_video, image_counts)
 
             if image_counts is not None:
                 # shape: [prompt_num, frame_num*image_shape, feat_dim]
                 final_token = final_token.reshape(len(prompts[_idx]), image_counts[_idx], *final_token.shape[-2:])
                 final_token = final_token.flatten(1,2)
             img_feat_lst.append(final_token)
+            # print(img_feat_lst[-1].shape)
 
         return img_feat_lst
 
@@ -426,6 +428,8 @@ class LLaMAVIDMetaForCausalLM(ABC):
                 attention_mask = torch.ones((attention_mask.shape[0], past_key_values[-1][-1].shape[-2] + 1), dtype=attention_mask.dtype, device=attention_mask.device)
             return input_ids, attention_mask, past_key_values, None, labels
         
+   
+    
         # pre-process images for long video
         if images[0].shape[-1] > 1000:
             long_video = True
@@ -441,10 +445,11 @@ class LLaMAVIDMetaForCausalLM(ABC):
             image_features = self.encode_images(concat_images, prompts, image_counts, long_video=long_video)
         else:
             image_features = self.encode_images(images, prompts, long_video=long_video)
-
+        # print(concat_images.shape, image_features[0].shape)
         new_input_embeds = []
         new_labels = [] if labels is not None else None
         cur_image_idx = 0
+        # print(image_features[0].shape, input_ids.shape, prompts)
         for batch_idx, cur_input_ids in enumerate(input_ids):
             if (cur_input_ids == IMAGE_TOKEN_INDEX).sum() == 0:
                 # multimodal LLM, but the current sample is not multimodal
@@ -478,6 +483,7 @@ class LLaMAVIDMetaForCausalLM(ABC):
                     else:
                         cur_image_features = image_features[cur_image_idx]
                     image_token_start = image_token_indices[0]
+                    # print(image_token_start, cur_image_features.shape)
                     
                     if getattr(self.config, 'tune_mm_mlp_adapter', False) and getattr(self.config, 'mm_use_im_start_end', False):
                         cur_new_input_embeds.append(self.get_model().embed_tokens(cur_input_ids[:image_token_start-1]).detach())
@@ -490,6 +496,7 @@ class LLaMAVIDMetaForCausalLM(ABC):
                             cur_new_labels.append(cur_labels[image_token_start:image_token_start+1])
                             cur_labels = cur_labels[image_token_start+2:]
                     else:
+                        # print('ss', cur_input_ids.shape, cur_image_features.shape)
                         cur_new_input_embeds.append(self.get_model().embed_tokens(cur_input_ids[:image_token_start]))
                         cur_new_input_embeds.append(cur_image_features)
                         if labels is not None:
