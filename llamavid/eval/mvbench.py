@@ -314,12 +314,12 @@ if __name__ == "__main__":
     data_list = {
         "Action Sequence": ("action_sequence.json", f"{data_root}/star/Charades_v1_480/", "video", True), # has start & end
         "Action Prediction": ("action_prediction.json", f"{data_root}/star/Charades_v1_480/", "video", True), # has start & end
-        "Action Antonym": ("action_antonym.json", f"{data_root}/ssv2_video/", "video", False),
+        # "Action Antonym": ("action_antonym.json", f"{data_root}/ssv2_video/", "video", False),
         "Fine-grained Action": ("fine_grained_action.json", f"{data_root}/Moments_in_Time_Raw/videos/", "video", False),
-        "Unexpected Action": ("unexpected_action.json", f"{data_root}/FunQA_test/test/", "video", False),
-        "Object Existence": ("object_existence.json", f"{data_root}/clevrer/video_validation/", "video", False),
+        # "Unexpected Action": ("unexpected_action.json", f"{data_root}/FunQA_test/test/", "video", False),
+        # "Object Existence": ("object_existence.json", f"{data_root}/clevrer/video_validation/", "video", False),
         "Object Interaction": ("object_interaction.json", f"{data_root}/star/Charades_v1_480/", "video", True), # has start & end
-        "Object Shuffle": ("object_shuffle.json", f"{data_root}/perception/videos/", "video", False),
+        # "Object Shuffle": ("object_shuffle.json", f"{data_root}/perception/videos/", "video", False),
         "Moving Direction": ("moving_direction.json", f"{data_root}/clevrer/video_validation/", "video", False),
         "Action Localization": ("action_localization.json", f"{data_root}/sta/sta_video/", "video", True),  # has start & end
         "Scene Transition": ("scene_transition.json", f"{data_root}/scene_qa/video/", "video", False),
@@ -328,10 +328,10 @@ if __name__ == "__main__":
         "Moving Attribute": ("moving_attribute.json", f"{data_root}/clevrer/video_validation/", "video", False),
         "State Change": ("state_change.json", f"{data_root}/perception/videos/", "video", False),
         "Fine-grained Pose": ("fine_grained_pose.json", f"{data_root}/nturgbd/", "video", False),
-        "Character Order": ("character_order.json", f"{data_root}/perception/videos/", "video", False),
+        # "Character Order": ("character_order.json", f"{data_root}/perception/videos/", "video", False),
         "Egocentric Navigation": ("egocentric_navigation.json", f"{data_root}/vlnqa/", "video", False),
-        "Episodic Reasoning": ("episodic_reasoning.json", f"{data_root}/tvqa/frames_fps3_hq/", "frame", True),  # has start & end, read frame
-        "Counterfactual Inference": ("counterfactual_inference.json", f"{data_root}/clevrer/video_validation/", "video", False),
+        # "Episodic Reasoning": ("episodic_reasoning.json", f"{data_root}/tvqa/frames_fps3_hq/", "frame", True),  # has start & end, read frame
+        # "Counterfactual Inference": ("counterfactual_inference.json", f"{data_root}/clevrer/video_validation/", "video", False),
     }
 
     data_dir = "/nvme/luzhuiang/MVBench/json"
